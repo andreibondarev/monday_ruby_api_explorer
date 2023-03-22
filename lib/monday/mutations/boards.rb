@@ -5,21 +5,77 @@ class Monday::Mutations::Boards < Monday::HttpRequest
 
     request = create_new_board_request(params)
 
-    response = request(request, 'Post')
+    request(request, :post)
+  end
 
-    response
+  def find(board_id)
+    raise KeyError, "Missing 'board_id' parameter" unless board_id
+
+    request = {
+      'query': "query {
+        boards (ids: #{board_id}){
+          id
+          name
+          description
+          state
+          columns {
+            id
+            title
+            type
+            archived
+            description
+            settings_str
+            width
+          }
+          items {
+            id
+            name
+            state
+            created_at
+            updated_at
+            column_values {
+              additional_info
+              id
+              text
+              title
+              type
+              value
+              description
+            }
+          }
+        }
+      }"
+    }
+
+    response = request(request, :post)
+    response.dig('data', 'boards').first
+  end
+
+  def list
+    request = {
+      'query': "query {
+        boards {
+          id
+          name
+          state
+          board_folder_id
+          board_kind
+        }
+      }"
+    }
+
+    response = request(request, :post)
+    response.dig('data', 'boards')
   end
 
   def archive_board(board_id)
-    raise KeyError, "Missing 'board_id' parameter" unless params.fetch(:board_id)
+    raise KeyError, "Missing 'board_id' parameter" unless board_id
 
     request = {
-      'query' => "mutation { archive_board (board_id: #{req[:board_id]}) { id } }" 
+      'query': "mutation { archive_board (board_id: #{board_id}) { id } }"
     }
 
-    response = request(request, 'Post')
-
-    response
+    request(request, :post)
   end
 
   private

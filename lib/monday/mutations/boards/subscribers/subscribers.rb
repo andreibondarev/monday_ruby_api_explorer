@@ -13,7 +13,7 @@ class Monday::Mutations::Boards::Subscribers < Monday::HttpRequest
       ) { id } }" 
     }
 
-    response = request(request, 'Post')
+    response = request(request, :post)
 
     response
   end
@@ -32,7 +32,7 @@ class Monday::Mutations::Boards::Subscribers < Monday::HttpRequest
       }"
     }
 
-    response = request(request, 'Post')
+    response = request(request, :post)
 
     response
   end

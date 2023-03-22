@@ -10,14 +10,14 @@ class Monday::HttpRequest
     https = Net::HTTP.new(url.host, url.port);
     https.use_ssl = true
     
-    request = Net::HTTP::Get.new(url) if type == 'Get'
-    request = Net::HTTP::Post.new(url) if type == 'Post'
+    request = Net::HTTP::Get.new(url) if type == :get
+    request = Net::HTTP::Post.new(url) if type == :post
     request["Content-Type"] = "application/json"
-    request["Authorization"] = "#{ENV['MONDAY_TOKEN']}"
+    // TODO: ??? Fix this 
+    request["Authorization"] = "eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjIxNTgwMzYwOCwidWlkIjozNzczMDIzNSwiaWFkIjoiMjAyMy0wMS0wMlQyMTowODozMC4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MTQ2MzM4MjYsInJnbiI6InVzZTEifQ.mWGsPkVlhRqT5WsZbHw99Ru2I5u9cQWZqz0QfCb2HP4"
     request.body = manage_query(query)
     response = https.request(request)
     
-
     parse(response)
   end
 
@@ -26,6 +26,8 @@ class Monday::HttpRequest
       query = query.collect{|k,v| [k.to_s, v]}.to_h.to_s.gsub('=>', ':')
       query
     end
+
+    puts(query)
 
     query
   end
